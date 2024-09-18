@@ -36,6 +36,9 @@ export class ProductsService {
     private currentId = this.products.length;
 
     create(createProductDto: CreateProductDto): Product {
+
+        console.log('createProductDto', createProductDto);
+        
         const newProduct: Product = {
             id: ++this.currentId,
             ...createProductDto
@@ -60,16 +63,21 @@ export class ProductsService {
 
     findByPrice(price: number): Product[] {
         console.log('find by price', price);
-        return this.products.filter(product => product.price <= price);
+        const product = this.products.filter(product => product.price <= price);
+        console.log('product', product);
+        if (!product.length) {
+            throw new NotFoundException(`Product with price less than or equal to ${price} was not found`);
+        }
+        return product;
     }
 
     update(id: number, updateProductDto: UpdateProductDto): Product {
         const productIndex = this.products.findIndex(product => product.id === id);
         if (productIndex === -1) {
-            return null;
+            throw new NotFoundException(`Product with id ${id} was not found`);
         }
 
-        this.products[productIndex] = {id, ...updateProductDto};;
+        this.products[productIndex] = {id, ...updateProductDto};
 
         return this.products[productIndex];
     }
@@ -77,7 +85,7 @@ export class ProductsService {
     patch(id: number, patchProductDto: PatchProductDto): Product {
         const productIndex = this.products.findIndex(product => product.id === id);
         if (productIndex === -1) {
-            return null;
+            throw new NotFoundException(`Product with id ${id} was not found`);
         }
 
         this.products[productIndex] = { ...this.products[productIndex], ...patchProductDto };
@@ -87,6 +95,10 @@ export class ProductsService {
 
     delete(id: number): void {
         const productIndex = this.products.findIndex(product => product.id === id);
+        if (productIndex === -1) {
+            throw new NotFoundException(`Product with id ${id} was not found`);
+        }
+
         this.products.splice(productIndex, 1);
     }
 }
