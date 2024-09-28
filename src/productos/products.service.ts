@@ -48,12 +48,30 @@ export class ProductsService {
         return newProduct;
     }
 
-    findAll(): Product[] {
-        return this.products;
+
+    async findAll(query?: {name?: string, price?: number}): Promise<Product[]>{
+        let productsFiltered = this.products;
+
+        if (query?.name){
+            productsFiltered = productsFiltered.filter(
+                product => product.name.toLowerCase().includes(
+                    query.name.toLowerCase()
+                )
+            );
+        }
+
+        if (query?.price){
+            productsFiltered = productsFiltered.filter(
+                product => product.price <= query.price
+            );
+        }
+
+        return productsFiltered;
+
     }
 
     findOne(id: number): Product {
-        console.log('find by id', id);
+        //console.log('find by id', id);
         const product = this.products.find(product => product.id === id);
         if (!product) {
             throw new NotFoundException(`Product with id ${id} was not found`);
@@ -62,9 +80,9 @@ export class ProductsService {
     }
 
     findByPrice(price: number): Product[] {
-        console.log('find by price', price);
+        //console.log('find by price', price);
         const product = this.products.filter(product => product.price <= price);
-        console.log('product', product);
+        //console.log('product', product);
         if (!product.length) {
             throw new NotFoundException(`Product with price less than or equal to ${price} was not found`);
         }

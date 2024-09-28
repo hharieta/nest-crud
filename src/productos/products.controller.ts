@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Patch, Delete, Param, Body, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Put, Patch, Delete, Param, Body, HttpCode, Query } from '@nestjs/common';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product';
 import { UpdateProductDto } from './dto/update-product';
@@ -19,15 +19,15 @@ export class ProductsController {
 
     @Get()
     @HttpCode(200)
-    async findAll(): Promise<Product[]> {
-        return this.productsService.findAll();
+    async findAll(@Query() query : {name?: string, price?: number}): Promise<Product[]> {
+        return this.productsService.findAll(query);
     }
 
     @Get(':id')
     @HttpCode(200)
     @UsePipes(new ValidationPipe({ transform: true }))
     async findOne(@Param('id') id: number): Promise<Product> {
-        console.log('id', id);
+        //console.log('id', id);
         return this.productsService.findOne(Number(id));
     }
 
@@ -35,7 +35,7 @@ export class ProductsController {
     @HttpCode(200)
     @UsePipes(new ValidationPipe({ transform: true }))
     async findByPrice(@Param('price') price: number): Promise<Product[]> {
-        console.log('price', price);
+        //console.log('price', price);
         return this.productsService.findByPrice(Number(price));
     }
 
