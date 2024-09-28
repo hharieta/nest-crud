@@ -37,7 +37,7 @@ export class ProductsService {
 
     create(createProductDto: CreateProductDto): Product {
 
-        console.log('createProductDto', createProductDto);
+        //console.log('createProductDto', createProductDto);
         
         const newProduct: Product = {
             id: ++this.currentId,
